@@ -32,25 +32,31 @@ struct SavedCitiesView: View {
             
             SearchBar(text: $searchQuery).padding(.top)
                 .onChange(of: searchQuery, perform: { query in
+                    citiesVM.errMsg = ""
                     citiesVM.fetchCities(query: query)
                 }).padding(.top)
             
             if searchQuery != "" {
-                List(citiesVM.cities) { city in
-                    Button(action: {
-                        citiesVM.demoPrintDetails(name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon)
-                    }, label: {
-                        HStack {
-                            Text("\(city.address.name), \(city.address.country)")
-                            Spacer()
-                            Button("Add City") {
-                                citiesVM.saveCity(id: city.id, name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon, viewContext: viewContext)
-                                searchQuery = ""
-                                // dismiss keyboard
-                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                if citiesVM.errMsg != "" {
+                    Text(citiesVM.errMsg).padding(.top)
+                    Spacer()
+                } else {
+                    List(citiesVM.cities) { city in
+                        Button(action: {
+                            citiesVM.demoPrintDetails(name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon)
+                        }, label: {
+                            HStack {
+                                Text("\(city.address.name), \(city.address.country)")
+                                Spacer()
+                                Button("Add City") {
+                                    citiesVM.saveCity(id: city.id, name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon, viewContext: viewContext)
+                                    searchQuery = ""
+                                    // dismiss keyboard
+                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                                }
                             }
-                        }
-                    })
+                        })
+                    }
                 }
             } else {
                 ScrollView {
@@ -69,7 +75,7 @@ struct SavedCitiesView: View {
                         ForEach(savedCities) { savedCity in
                             HStack {
                                 Text("\(savedCity.name!), \(savedCity.country!)")
-                                Spacer()
+                                Spacer() 
                                 Button(action: {
                                     if let index = savedCities.firstIndex(of: savedCity) {
                                         deleteSavedCity(offsets: IndexSet(integer: index))
@@ -88,6 +94,11 @@ struct SavedCitiesView: View {
             }
             
         }.padding()
+        .alert(isPresented: self.$citiesVM.alertTrigger, content: {
+            Alert(title: Text("Unable to save city"),
+                  message: Text(citiesVM.alertMsg),
+                  dismissButton: .default(Text("OK")))
+        })
     }
     // delete saved city
     private func deleteSavedCity(offsets: IndexSet) {

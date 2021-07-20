@@ -11,6 +11,10 @@ import CoreData
 final class CitiesViewModel: ObservableObject {
     
     @Published var cities = [CitiesModel]()
+    @Published var errMsg = ""
+    @Published var alertMsg = ""
+    @Published var alertTrigger = false
+    @Published var isLoading = false
     
     private var APIKey = "pk.fa0820725798c315ecad68416c93cd65"
     
@@ -38,9 +42,10 @@ final class CitiesViewModel: ObservableObject {
                     print("Unable to decode JSON -> \(error)")
                 }
             }
-            print("Fixtures fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
-            //            alertMsg = error?.localizedDescription ?? "Unknown Error"
-            //            alertTrigger.toggle()
+            //print("Fixtures fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
+            DispatchQueue.main.async {
+                self.errMsg = error?.localizedDescription ?? "Unknown Error"
+            }
         }.resume()
     }
     
@@ -71,6 +76,8 @@ final class CitiesViewModel: ObservableObject {
     func saveCity(id: String, name: String, country: String, lat: String, lon: String, viewContext: NSManagedObjectContext) {
         if isCitySaved(context: viewContext, id: Int(id)!) {
             // alert users about it
+            self.alertMsg = "City already on Saved List."
+            self.alertTrigger.toggle()
         } else {
             let newSavedCity = SavedCity(context: viewContext)
             newSavedCity.id = Int64(id)!
