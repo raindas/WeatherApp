@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @StateObject var weatherVM = WeatherViewModel()
     @State private var isShowingNext7Days = false
     @State private var isShowingCitiesView = false
     @State private var isShowingPreferencesView = false
@@ -124,6 +125,8 @@ struct ContentView: View {
             .fullScreenCover(isPresented: $isShowingPreferencesView, content: {
                 PreferencesView()
             })
+        }.onAppear {
+            weatherVM.fetchWeather()
         }
     }
 }
