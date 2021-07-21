@@ -12,7 +12,7 @@ struct WeatherResponse: Decodable {
     var lon: Double
     var timezone: String
     var current: CurrentWeather
-    var hourly: [CurrentWeather]
+    var hourly: [HourlyWeather]
     var daily: [DailyWeather]
 }
 
@@ -26,6 +26,20 @@ struct CurrentWeather: Decodable {
     var wind_speed: Double
     var wind_deg: Int
     var weather: [CurrentWeatherDescription]
+    var weatherMain: String {
+        var main = ""
+        for value in weather {
+            main = value.main
+        }
+        return main
+    }
+    var weatherDescription: String {
+        var desc = ""
+        for value in weather {
+            desc = value.description
+        }
+        return desc
+    }
     
     enum CodingKeys: String, CodingKey {
         case datetime = "dt"
@@ -37,6 +51,26 @@ struct CurrentWeather: Decodable {
 struct CurrentWeatherDescription: Decodable {
     var main: String
     var description: String
+}
+
+struct HourlyWeather: Decodable, Identifiable {
+    var id = UUID()
+    var datetime: Int
+    var temperature: Double
+    var weather: [CurrentWeatherDescription]
+    var main: String {
+        var main = ""
+        for value in weather {
+            main = value.main
+        }
+        return main
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case datetime = "dt"
+        case temperature = "temp"
+        case weather
+    }
 }
 
 struct DailyWeather: Decodable {

@@ -16,7 +16,7 @@ final class CitiesViewModel: ObservableObject {
     @Published var alertTrigger = false
     @Published var isLoading = false
     
-    private var APIKey = "pk.fa0820725798c315ecad68416c93cd65"
+    public var APIKey = "pk.fa0820725798c315ecad68416c93cd65"
     
     // fetch cities
     func fetchCities(query: String) {
@@ -87,12 +87,5 @@ final class CitiesViewModel: ObservableObject {
             newSavedCity.lon = Double(lon)!
             saveContext(context: viewContext)
         }
-    }
-    
-    func demoPrintDetails(name:String,country:String,lat:String,lon:String) {
-        print("Name -> \(name)")
-        print("Country -> \(country)")
-        print("lat -> \(Double(lat)!)")
-        print("lon -> \(Double(lon)!)")
     }
 }

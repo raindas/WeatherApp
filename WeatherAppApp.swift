@@ -12,10 +12,13 @@ struct WeatherAppApp: App {
     
     let persistenceController = PersistenceController.shared
     
+    @StateObject var weatherVM = WeatherViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(weatherVM)
         }
     }
 }

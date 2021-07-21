@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var weatherVM = WeatherViewModel()
+    @EnvironmentObject var weatherVM: WeatherViewModel
+    
     @State private var isShowingNext7Days = false
     @State private var isShowingCitiesView = false
     @State private var isShowingPreferencesView = false
@@ -22,17 +23,29 @@ struct ContentView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
-                            Text("Lagos,").bold()
-                            Text("Nigeria").foregroundColor(.secondary)
+                            Text("\(weatherVM.city == "" ? "City" : weatherVM.city),").bold()
+                            Text(weatherVM.country == "" ? "Country" : weatherVM.country).foregroundColor(.secondary)
                         }.font(.largeTitle)
+                        .minimumScaleFactor(0.01)
+                        .lineLimit(1)
                         
                         HStack {
-                            Text("Monday,").font(.title3).foregroundColor(.secondary)
-                            Text(Date(), style: .time).font(.title3).foregroundColor(.secondary)
-                        }
+                            Text("Monday,")
+                            Text(Date(), style: .time)
+                        }.font(.title3).foregroundColor(.secondary)
                     }
                     Spacer()
                     Menu {
+                        Button(action: {
+                            weatherVM.latitude = 0.0
+                            weatherVM.longtitude = 0.0
+                            weatherVM.city = ""
+                            weatherVM.country = ""
+                            weatherVM.fetchWeather()
+                        }, label: {
+                            Image(systemName: "arrow.clockwise")
+                            Text("Refresh Weather Data")
+                        })
                         Button(action: {isShowingCitiesView.toggle()}, label: {
                             Image(systemName: "list.dash")
                             Text("Saved Cities")
@@ -49,8 +62,8 @@ struct ContentView: View {
                 Spacer()
                 
                 Image(systemName: "cloud.sun.fill").font(.system(size: 70))
-                Text("28º").bold().font(.system(size: 70))
-                Text("Partly Cloudy").font(.title2).foregroundColor(.secondary)
+                Text("\(String(format: "%.0f", weatherVM.weather.current.temperature) == "0" ? "__" : "\(String(format: "%.0f", (weatherVM.weather.current.temperature)) )")º").bold().font(.system(size: 70))
+                Text(weatherVM.weather.current.weatherDescription).font(.title2).foregroundColor(.secondary)
                 
                 Spacer()
                 
@@ -70,40 +83,40 @@ struct ContentView: View {
                     HStack(alignment: .top) {
                         VStack {
                             Text("Feels Like").foregroundColor(.secondary)
-                            Text("29º").font(.title)
+                            Text("\(String(format: "%.0f", weatherVM.weather.current.feels_like) == "0" ? "__" : String(format: "%.0f", weatherVM.weather.current.feels_like))º").font(.title)
                             Divider()
                             Text("Visibility").foregroundColor(.secondary)
-                            Text("3").font(.title)
+                            Text("\(weatherVM.weather.current.visibility)").font(.title)
                             Text("Km").font(.footnote)
                         }
                         Spacer()
                         VStack {
                             Text("Pressure").foregroundColor(.secondary)
-                            Text("60").font(.title)
+                            Text("\(weatherVM.weather.current.pressure)").font(.title)
                             Text("mmHg").font(.footnote)
                             Divider()
                             Text("Wind Speed").foregroundColor(.secondary)
-                            Text("15").font(.title)
+                            Text("\(String(format: "%.0f", weatherVM.weather.current.wind_speed) == "0" ? "__" : String(format: "%.0f", weatherVM.weather.current.wind_speed))").font(.title)
                             Text("Km/h").font(.footnote)
                         }
                         Spacer()
                         VStack {
                             Text("Humidity").foregroundColor(.secondary)
-                            Text("29%").font(.title)
+                            Text("\(weatherVM.weather.current.humidity)%").font(.title)
                             Divider()
                             Text("Wind Degree").foregroundColor(.secondary)
-                            Text("12º").font(.title)
+                            Text("\(weatherVM.weather.current.wind_deg)º").font(.title)
                         }
                     }.padding(.vertical)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 15) {
-                            ForEach(1..<10) {
-                                _ in
+                            ForEach(weatherVM.weather.hourly) {
+                                hour in
                                 VStack {
                                     Text(Date(), style: .time).padding(5)
                                     Image(systemName: "cloud.sun.fill").font(.largeTitle).padding(5)
-                                    Text("28º").font(.largeTitle).padding(5)
+                                    Text("\(String(format: "%.0f", hour.temperature) == "0" ? "__" : String(format: "%.0f", hour.temperature))º").font(.largeTitle).padding(5)
                                 }.padding(5)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10.0)
@@ -133,7 +146,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(WeatherViewModel())
         
     }
 }

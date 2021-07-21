@@ -23,3 +23,12 @@ struct Address: Codable, Equatable {
     var name: String
     var country: String
 }
+
+struct CurrentCity: Decodable {
+    var address: CurrentCityAddress
+}
+
+struct CurrentCityAddress: Decodable {
+    var city: String?
+    var country: String?
+}

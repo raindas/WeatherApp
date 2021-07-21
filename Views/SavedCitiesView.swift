@@ -11,6 +11,7 @@ struct SavedCitiesView: View {
     
     @StateObject var citiesVM = CitiesViewModel()
     
+    @EnvironmentObject var weatherVM: WeatherViewModel
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -42,20 +43,16 @@ struct SavedCitiesView: View {
                     Spacer()
                 } else {
                     List(citiesVM.cities) { city in
-                        Button(action: {
-                            citiesVM.demoPrintDetails(name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon)
-                        }, label: {
-                            HStack {
-                                Text("\(city.address.name), \(city.address.country)")
-                                Spacer()
-                                Button("Add City") {
-                                    citiesVM.saveCity(id: city.id, name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon, viewContext: viewContext)
-                                    searchQuery = ""
-                                    // dismiss keyboard
-                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                                }
+                        HStack {
+                            Text("\(city.address.name), \(city.address.country)")
+                            Spacer()
+                            Button("Add City") {
+                                citiesVM.saveCity(id: city.id, name: city.address.name, country: city.address.country, lat: city.lat, lon: city.lon, viewContext: viewContext)
+                                searchQuery = ""
+                                // dismiss keyboard
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                             }
-                        })
+                        }
                     }
                 }
             } else {
@@ -73,17 +70,27 @@ struct SavedCitiesView: View {
                         .cornerRadius(10.0)
                         .padding(.vertical, 5.0)
                         ForEach(savedCities) { savedCity in
-                            HStack {
-                                Text("\(savedCity.name!), \(savedCity.country!)")
-                                Spacer() 
-                                Button(action: {
-                                    if let index = savedCities.firstIndex(of: savedCity) {
-                                        deleteSavedCity(offsets: IndexSet(integer: index))
-                                    }
-                                }, label: {
-                                    Image(systemName: "trash")
-                                })
-                            }.font(.title2)
+                            Button(action: {
+                                // load weather forcast for this city
+                                weatherVM.latitude = savedCity.lat
+                                weatherVM.longtitude = savedCity.lon
+                                weatherVM.city = savedCity.name!
+                                weatherVM.country = savedCity.country!
+                                weatherVM.fetchWeather()
+                                presentationMode.wrappedValue.dismiss()
+                            }, label: {
+                                HStack {
+                                    Text("\(savedCity.name!), \(savedCity.country!)")
+                                    Spacer()
+                                    Button(action: {
+                                        if let index = savedCities.firstIndex(of: savedCity) {
+                                            deleteSavedCity(offsets: IndexSet(integer: index))
+                                        }
+                                    }, label: {
+                                        Image(systemName: "trash")
+                                    })
+                                }
+                            }).font(.title2)
                             .padding()
                             .background(Color(.systemGray6))
                             .cornerRadius(10.0)
@@ -109,6 +116,6 @@ struct SavedCitiesView: View {
 
 struct SavedCitiesView_Previews: PreviewProvider {
     static var previews: some View {
-        SavedCitiesView()
+        SavedCitiesView().environmentObject(WeatherViewModel())
     }
 }
