@@ -15,6 +15,8 @@ struct ContentView: View {
     @State private var isShowingCitiesView = false
     @State private var isShowingPreferencesView = false
     
+    let dateTimeManager = DateTimeManager()
+    
     var body: some View {
         NavigationView {
             
@@ -30,8 +32,8 @@ struct ContentView: View {
                         .lineLimit(1)
                         
                         HStack {
-                            Text("Monday,")
-                            Text(Date(), style: .time)
+                            Text("\(dateTimeManager.epochToDay(timestamp: weatherVM.weather.current.datetime)),")
+                            Text(dateTimeManager.epochToHumanDate(timestamp: weatherVM.weather.current.datetime), style: .time)
                         }.font(.title3).foregroundColor(.secondary)
                     }
                     Spacer()
@@ -61,7 +63,7 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Image(systemName: "cloud.sun.fill").font(.system(size: 70))
+                Image(systemName: weatherVM.iconMap[weatherVM.weather.current.weatherMain] ?? weatherVM.defaultIcon).font(.system(size: 70))
                 Text("\(String(format: "%.0f", weatherVM.weather.current.temperature) == "0" ? "__" : "\(String(format: "%.0f", (weatherVM.weather.current.temperature)) )")º").bold().font(.system(size: 70))
                 Text(weatherVM.weather.current.weatherDescription).font(.title2).foregroundColor(.secondary)
                 
@@ -69,7 +71,7 @@ struct ContentView: View {
                 
                 VStack {
                     
-                    NavigationLink("",destination:NextSevenDaysView().navigationBarBackButtonHidden(true).navigationBarHidden(true),isActive: $isShowingNext7Days)
+                    NavigationLink("",destination:NextSevenDaysView(city: weatherVM.city == "" ? "City" : weatherVM.city, country: weatherVM.country == "" ? "Country" : weatherVM.country, dailyWeather: weatherVM.weather.daily).navigationBarBackButtonHidden(true).navigationBarHidden(true),isActive: $isShowingNext7Days)
                     
                     HStack {
                         Text("Today")
@@ -114,8 +116,8 @@ struct ContentView: View {
                             ForEach(weatherVM.weather.hourly) {
                                 hour in
                                 VStack {
-                                    Text(Date(), style: .time).padding(5)
-                                    Image(systemName: "cloud.sun.fill").font(.largeTitle).padding(5)
+                                    Text(dateTimeManager.epochToHumanDate(timestamp: hour.datetime), style: .time).padding(5)
+                                    Image(systemName: weatherVM.iconMap[hour.main] ?? weatherVM.defaultIcon).font(.largeTitle).padding(5)
                                     Text("\(String(format: "%.0f", hour.temperature) == "0" ? "__" : String(format: "%.0f", hour.temperature))º").font(.largeTitle).padding(5)
                                 }.padding(5)
                                 .overlay(

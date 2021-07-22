@@ -16,12 +16,10 @@ final class CitiesViewModel: ObservableObject {
     @Published var alertTrigger = false
     @Published var isLoading = false
     
-    public var APIKey = "pk.fa0820725798c315ecad68416c93cd65"
-    
     // fetch cities
     func fetchCities(query: String) {
         
-        let urlString = "https://api.locationiq.com/v1/autocomplete.php?key=\(APIKey)&q=\(query)&tag=place%3Acity"
+        let urlString = "https://api.locationiq.com/v1/autocomplete.php?key=\(APIKeys.cityAPIKey)&q=\(query)&tag=place%3Acity"
         
         guard let url = URL(string: urlString) else {
             print("Invalid URL")

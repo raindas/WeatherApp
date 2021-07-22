@@ -11,11 +11,26 @@ struct PreferencesView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    @State var metric = true
+    
     var body: some View {
-        Text("Preferences View")
-        Button("Dismiss"){
-            presentationMode.wrappedValue.dismiss()
-        }
+        VStack{
+            
+            HStack {
+                Text("Preferences").font(.largeTitle.bold())
+                Spacer()
+                Button(action: {presentationMode.wrappedValue.dismiss()}, label: {
+                    Image(systemName: "xmark").font(.largeTitle).foregroundColor(.primary)
+                })
+            }
+            
+            Form {
+                Section {
+                    Toggle("Use metric unit system", isOn: $metric)
+                }
+            }
+            
+        }.padding()
     }
 }
 

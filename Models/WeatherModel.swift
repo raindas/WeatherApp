@@ -73,10 +73,18 @@ struct HourlyWeather: Decodable, Identifiable {
     }
 }
 
-struct DailyWeather: Decodable {
+struct DailyWeather: Decodable, Identifiable {
+    var id = UUID()
     var datetime: Int
     var temperature: DailyWeatherTemperature
-    var weather: [DailyWeatherDescription]
+    var weather: [CurrentWeatherDescription]
+    var main: String {
+        var main = ""
+        for value in weather {
+            main = value.main
+        }
+        return main
+    }
     
     enum CodingKeys: String, CodingKey {
         case datetime = "dt"
@@ -90,7 +98,7 @@ struct DailyWeatherTemperature: Decodable {
     var max: Double
 }
 
-struct DailyWeatherDescription: Decodable {
-    var main: String
-    var description: String
-}
+//struct DailyWeatherDescription: Decodable {
+//    var main: String
+//    var description: String
+//}

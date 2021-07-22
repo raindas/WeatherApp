@@ -11,6 +11,13 @@ struct NextSevenDaysView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    let city: String
+    let country: String
+    let dailyWeather: [DailyWeather]
+    
+    let dateTimeManager = DateTimeManager()
+    @EnvironmentObject var weatherVM: WeatherViewModel
+    
     var body: some View {
         VStack {
             
@@ -21,8 +28,11 @@ struct NextSevenDaysView: View {
                     Image(systemName: "chevron.left").foregroundColor(.primary)
                 })
                 Spacer()
-                Text("Lagos,")
-                Text("Nigeria").foregroundColor(.secondary)
+                Group {
+                    Text("\(self.city),")
+                    Text(self.country).foregroundColor(.secondary)
+                }.minimumScaleFactor(0.01)
+                .lineLimit(1)
                 Spacer()
             }.font(.title)
             
@@ -33,15 +43,15 @@ struct NextSevenDaysView: View {
             }.padding(.top)
             
             // next 7 days forcast
-            ForEach(1..<8) { _ in
+            ForEach(self.dailyWeather) { day in
                 HStack {
-                    Image(systemName: "sun.max.fill")
+                    Image(systemName: weatherVM.iconMap[day.main] ?? weatherVM.defaultIcon)
                     Spacer()
-                    Text("Tuesday, 20 Jul")
+                    Text(dateTimeManager.epochToDayDate(timestamp: day.datetime))
                     Spacer()
-                    Text("32º")
+                    Text("\(String(format: "%.0f", day.temperature.max) == "0" ? "__" : "\(String(format: "%.0f", day.temperature.max) )")º")
                     Text("/").foregroundColor(.secondary)
-                    Text("31º").font(.title2).foregroundColor(.secondary)
+                    Text("\(String(format: "%.0f", day.temperature.min) == "0" ? "__" : "\(String(format: "%.0f", day.temperature.min) )")º").font(.title2).foregroundColor(.secondary)
                 }.font(.title).padding(.vertical)
             }
             
@@ -53,7 +63,6 @@ struct NextSevenDaysView: View {
 
 struct NextSevenDaysView_Previews: PreviewProvider {
     static var previews: some View {
-        NextSevenDaysView()
-            
+        NextSevenDaysView(city: "City", country: "Country", dailyWeather: [DailyWeather(datetime: 0, temperature: DailyWeatherTemperature(min: 0.0, max: 0.0), weather: [CurrentWeatherDescription(main: "", description: "")])]).environmentObject(WeatherViewModel())
     }
 }

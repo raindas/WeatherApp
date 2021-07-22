@@ -8,7 +8,9 @@
 import Foundation
 
 final class WeatherViewModel: ObservableObject {
-    private var APIKey = "dae23f6033e775a3c1fae2be07e0236e"//<-- entire API key here
+    
+    // preferences
+    @Published var useMetricSystem = true
     
     @Published var locationManager = LocationManager()
     
@@ -18,16 +20,30 @@ final class WeatherViewModel: ObservableObject {
     var hourly: HourlyWeather
     var daily: DailyWeather
     var dailyWeatherTemp: DailyWeatherTemperature
-    var dailyWeatherDesc: DailyWeatherDescription
+    var dailyWeatherDesc: CurrentWeatherDescription
     
     @Published var latitude = 0.0
     @Published var longtitude = 0.0
     @Published var city = ""
     @Published var country = ""
     
+    var unit: String {
+        return useMetricSystem ? "metric" : "imperial"
+    }
+    
+    let defaultIcon = "questionmark"
+    let iconMap = [
+        "Drizzle" : "cloud.drizzle.fill",
+        "Thunderstorm" : "cloud.bolt.fill",
+        "Rain" : "cloud.rain.fill",
+        "Snow" : "snow",
+        "Clear" : "sun.max.fill",
+        "Clouds" : "cloud.fill",
+    ]
+    
     init() {
         // create dummy data
-        let dailyWeatherDescription = DailyWeatherDescription(main: "__", description: "__")
+        let dailyWeatherDescription = CurrentWeatherDescription(main: "__", description: "__")
         let dailyWeatherTemperature = DailyWeatherTemperature(min: 0.0, max: 0.0)
         let daily = DailyWeather(datetime: 0, temperature: dailyWeatherTemperature, weather: [dailyWeatherDescription])
         
@@ -56,7 +72,7 @@ final class WeatherViewModel: ObservableObject {
             fetchCurrentCityAddress()
         }
         
-        let urlString = "https://api.openweathermap.org/data/2.5/onecall?lat=\(latitude)&lon=\(longtitude)&exclude=minutely&units=metric&appid=\(APIKey)"
+        let urlString = "https://api.openweathermap.org/data/2.5/onecall?lat=\(latitude)&lon=\(longtitude)&exclude=minutely&units=\(unit)&appid=\(APIKeys.weatherAPIKey)"
         
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -87,9 +103,8 @@ final class WeatherViewModel: ObservableObject {
     
     // fetch current city name and country
     func fetchCurrentCityAddress() {
-        let CityAPIKey = CitiesViewModel().APIKey
         var currentCity = CurrentCity(address: CurrentCityAddress(city: "__", country: "__"))
-        let urlString = "https://us1.locationiq.com/v1/reverse.php?key=\(CityAPIKey)&lat=\(self.latitude)&lon=\(self.longtitude)&format=json"
+        let urlString = "https://us1.locationiq.com/v1/reverse.php?key=\(APIKeys.cityAPIKey)&lat=\(self.latitude)&lon=\(self.longtitude)&format=json"
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
             return
