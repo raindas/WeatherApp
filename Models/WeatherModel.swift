@@ -24,7 +24,7 @@ struct CurrentWeather: Decodable {
     var humidity: Int
     var visibility: Int
     var wind_speed: Double
-    var wind_deg: Int
+    var uvi: Int
     var weather: [CurrentWeatherDescription]
     var weatherMain: String {
         var main = ""
@@ -44,7 +44,7 @@ struct CurrentWeather: Decodable {
     enum CodingKeys: String, CodingKey {
         case datetime = "dt"
         case temperature = "temp"
-        case feels_like, pressure, humidity, visibility, wind_speed, wind_deg, weather
+        case feels_like, pressure, humidity, visibility, wind_speed, uvi, weather
     }
 }
 

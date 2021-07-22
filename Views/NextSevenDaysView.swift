@@ -43,7 +43,7 @@ struct NextSevenDaysView: View {
             }.padding(.top)
             
             // next 7 days forcast
-            ForEach(self.dailyWeather) { day in
+            ForEach(self.dailyWeather.prefix(7)) { day in
                 HStack {
                     Image(systemName: weatherVM.iconMap[day.main] ?? weatherVM.defaultIcon)
                     Spacer()

@@ -17,19 +17,14 @@ final class DateTimeManager {
     }
     
     func epochToDay(timestamp: Int) -> String {
-        formatter.dateStyle = .full
-        // split datetime into two parts
-        // expected human date to look like “Tuesday, April 12, 1952 AD” or “3:30:42 PM Pacific Standard Time”
-        let humanDateParts = formatter.string(from: epochToHumanDate(timestamp: timestamp)).components(separatedBy: ",")
-        return humanDateParts[0]
+        // expected return example -> Tuesday
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: epochToHumanDate(timestamp: timestamp))
     }
     
     func epochToDayDate(timestamp: Int) -> String {
-        // expected return -> Tuesday, Jul 20
-        formatter.dateStyle = .full
-        // split datetime into two parts
-        // expected human date to look like “Tuesday, April 12, 1952 AD” or “3:30:42 PM Pacific Standard Time”
-        let humanDateParts = formatter.string(from: epochToHumanDate(timestamp: timestamp)).components(separatedBy: ",")
-        return humanDateParts[0]+","+humanDateParts[1]
+        // expected return example -> Tuesday, 20 Jul
+        formatter.dateFormat = "EEEE, d MMM"
+        return formatter.string(from: epochToHumanDate(timestamp: timestamp))
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 final class WeatherViewModel: ObservableObject {
     
     // preferences
-    @Published var useMetricSystem = true
+    //@Published var useMetricSystem = UserDefaults.standard.bool(forKey: "unit") ? UserDefaults.standard.bool(forKey: "unit") : true
     
     @Published var locationManager = LocationManager()
     
@@ -27,9 +27,22 @@ final class WeatherViewModel: ObservableObject {
     @Published var city = ""
     @Published var country = ""
     
-    var unit: String {
-        return useMetricSystem ? "metric" : "imperial"
+    @Published var errMsg = ""
+    @Published var alertMsg = ""
+    @Published var alertTrigger = false
+    @Published var isLoading = false
+    
+//    var unit: String {
+//        return useMetricSystem ? "metric" : "imperial"
+//    }
+    
+    // Preferences
+    @Published var unit = UserDefaults.standard.string(forKey: "unit") ?? "metric"
+    
+    var useMetricSystem: Bool {
+        return unit == "metric" ? true : false
     }
+    
     
     let defaultIcon = "questionmark"
     let iconMap = [
@@ -39,6 +52,15 @@ final class WeatherViewModel: ObservableObject {
         "Snow" : "snow",
         "Clear" : "sun.max.fill",
         "Clouds" : "cloud.fill",
+        "Mist" : "cloud.fog.fill",
+        "Smoke" : "smoke.fill",
+        "Haze" : "sun.haze.fill",
+        "Dust" : "sun.dust.fill",
+        "Fog" : "cloud.fog.fill",
+        "Sand" : "sun.dust.fill",
+        "Ash" : "smoke.fill",
+        "Squall" : "wind",
+        "Tornado" : "tornado"
     ]
     
     init() {
@@ -49,7 +71,7 @@ final class WeatherViewModel: ObservableObject {
         
         let currentWeatherDescription = CurrentWeatherDescription(main: "--", description: "--")
         
-        let current = CurrentWeather(datetime: 0, temperature: 0.0, feels_like: 0.0, pressure: 0, humidity: 0, visibility: 0, wind_speed: 0.0, wind_deg: 0, weather: [currentWeatherDescription])
+        let current = CurrentWeather(datetime: 0, temperature: 0.0, feels_like: 0.0, pressure: 0, humidity: 0, visibility: 0, wind_speed: 0.0, uvi: 0, weather: [currentWeatherDescription])
         let hourly = HourlyWeather(datetime: 0, temperature: 0, weather: [currentWeatherDescription])
         
         self.dailyWeatherDesc = dailyWeatherDescription
@@ -59,6 +81,13 @@ final class WeatherViewModel: ObservableObject {
         self.currentWeatherDesc = currentWeatherDescription
         self.current = current
         self.weather = WeatherResponse(lat: 0.0, lon: 0.0, timezone: "", current: self.current, hourly: [self.hourly], daily: [self.daily])
+    }
+    
+    // preferences
+    func changeUnit() {
+        print("unit -> \(unit)")
+        unit = unit == "metric" ? "imperial" : "metric"
+        UserDefaults.standard.set(unit, forKey: "unit")
     }
     
     // fetch weather forcast

@@ -60,11 +60,21 @@ struct SavedCitiesView: View {
                     if savedCities.isEmpty {
                         Text("No saved city.")
                     } else {
-                        HStack {
-                            Image(systemName: "location")
-                            Text("Current Location")
-                            Spacer()
-                        }.font(.title2)
+                        Button(action: {
+                            // load weather forcast for current location
+                            weatherVM.latitude = 0.0
+                            weatherVM.longtitude = 0.0
+                            weatherVM.city = ""
+                            weatherVM.country = ""
+                            weatherVM.fetchWeather()
+                            presentationMode.wrappedValue.dismiss()
+                        }, label: {
+                            HStack {
+                                Image(systemName: "location")
+                                Text("Current Location")
+                                Spacer()
+                            }
+                        }).font(.title2)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(10.0)
@@ -91,6 +101,7 @@ struct SavedCitiesView: View {
                                     })
                                 }
                             }).font(.title2)
+                            .foregroundColor(.primary)
                             .padding()
                             .background(Color(.systemGray6))
                             .cornerRadius(10.0)

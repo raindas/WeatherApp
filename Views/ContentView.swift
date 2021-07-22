@@ -39,10 +39,6 @@ struct ContentView: View {
                     Spacer()
                     Menu {
                         Button(action: {
-                            weatherVM.latitude = 0.0
-                            weatherVM.longtitude = 0.0
-                            weatherVM.city = ""
-                            weatherVM.country = ""
                             weatherVM.fetchWeather()
                         }, label: {
                             Image(systemName: "arrow.clockwise")
@@ -88,32 +84,41 @@ struct ContentView: View {
                             Text("\(String(format: "%.0f", weatherVM.weather.current.feels_like) == "0" ? "__" : String(format: "%.0f", weatherVM.weather.current.feels_like))º").font(.title)
                             Divider()
                             Text("Visibility").foregroundColor(.secondary)
-                            Text("\(weatherVM.weather.current.visibility)").font(.title)
+                            Text("\((weatherVM.weather.current.visibility)/1000)").font(.title)
                             Text("Km").font(.footnote)
                         }
                         Spacer()
                         VStack {
                             Text("Pressure").foregroundColor(.secondary)
                             Text("\(weatherVM.weather.current.pressure)").font(.title)
-                            Text("mmHg").font(.footnote)
+                            Text("hPa").font(.footnote)
                             Divider()
                             Text("Wind Speed").foregroundColor(.secondary)
-                            Text("\(String(format: "%.0f", weatherVM.weather.current.wind_speed) == "0" ? "__" : String(format: "%.0f", weatherVM.weather.current.wind_speed))").font(.title)
-                            Text("Km/h").font(.footnote)
+                            Text("\(String(format: "%.0f", weatherVM.weather.current.wind_speed) == "0" ? "__" : String(format: "%.0f", weatherVM.useMetricSystem ? (weatherVM.weather.current.wind_speed * 15)/5 : weatherVM.weather.current.wind_speed))").font(.title)
+                            Text(weatherVM.useMetricSystem ? "Km/h" : "mph").font(.footnote)
                         }
                         Spacer()
                         VStack {
                             Text("Humidity").foregroundColor(.secondary)
                             Text("\(weatherVM.weather.current.humidity)%").font(.title)
                             Divider()
-                            Text("Wind Degree").foregroundColor(.secondary)
-                            Text("\(weatherVM.weather.current.wind_deg)º").font(.title)
+                            Text("UV Index").foregroundColor(.secondary)
+                            Text("\(weatherVM.weather.current.uvi)").font(.title)
                         }
                     }.padding(.vertical)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 15) {
-                            ForEach(weatherVM.weather.hourly) {
+                            VStack {
+                                Text("Now").padding(5)
+                                Image(systemName: weatherVM.iconMap[weatherVM.weather.hourly[0].main] ?? weatherVM.defaultIcon).font(.largeTitle).padding(5)
+                                Text("\(String(format: "%.0f", weatherVM.weather.hourly[0].temperature) == "0" ? "__" : String(format: "%.0f", weatherVM.weather.hourly[0].temperature))º").font(.largeTitle).padding(5)
+                            }.padding(5)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10.0)
+                                    .stroke(Color.secondary, lineWidth: 1)
+                            )
+                            ForEach(weatherVM.weather.hourly.suffix(weatherVM.weather.hourly.count-1)) {
                                 hour in
                                 VStack {
                                     Text(dateTimeManager.epochToHumanDate(timestamp: hour.datetime), style: .time).padding(5)
