@@ -21,7 +21,8 @@ Clone the Repository, should build right away on your xcode.
 - [Email 2 - adesanyasegun299@outlook.com](mailto:adesanyasegun299@outlook.com)
 
 ## Screenshots
-
+![WeatherApp Light mode](https://user-images.githubusercontent.com/65086989/126850328-2b43f307-428d-4635-8f6e-0e634ce89743.jpg)
+![WeatherApp Dark mode](https://user-images.githubusercontent.com/65086989/126850325-7e68f108-c07d-447e-b8e4-fb904f8a1f79.jpg)
 
 ## Video
-https://user-images.githubusercontent.com/65086989/125704503-1642a56e-ffd2-43d4-bc60-478d8182421f.mp4
+https://user-images.githubusercontent.com/65086989/126850356-68e53261-2132-4a66-b747-be0443dbe0f6.mp4
