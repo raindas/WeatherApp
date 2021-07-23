@@ -42,7 +42,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         locationStatus = status
-        print("Location Status -> \(locationStatus!)")
         print(#function, statusString)
     }
     

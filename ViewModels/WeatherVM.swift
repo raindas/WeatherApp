@@ -77,8 +77,6 @@ final class WeatherViewModel: ObservableObject {
     
     // preferences
     func changeUnit() {
-        print("unit -> \(unit)")
-        unit = unit == "metric" ? "imperial" : "metric"
         UserDefaults.standard.set(unit, forKey: "unit")
     }
     
@@ -89,7 +87,6 @@ final class WeatherViewModel: ObservableObject {
         if self.latitude == 0.0 && self.longtitude == 0.0 {
             self.latitude = locationManager.lastLocation?.coordinate.latitude ?? 0.0
             self.longtitude = locationManager.lastLocation?.coordinate.longitude ?? 0.0
-            print("lat -> \(self.latitude) | lon -> \(self.longtitude)")
             fetchCurrentCityAddress()
         }
         
@@ -143,11 +140,10 @@ final class WeatherViewModel: ObservableObject {
                 do {
                     let decodedResponse = try JSONDecoder().decode(CurrentCity.self, from: data)
                     DispatchQueue.main.async {
-                        print("Weather City Response -> \(decodedResponse)")
                         currentCity = decodedResponse
                         self.city = currentCity.address.city ?? "__"
                         self.country = currentCity.address.country ?? "__"
-                        print("Weather City Response latlon -> \(self.latitude), \(self.longtitude)")
+                        //print("Weather City Response latlon -> \(self.latitude), \(self.longtitude)")
                     }
                     return
                 } catch {

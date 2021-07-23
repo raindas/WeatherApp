@@ -97,8 +97,3 @@ struct DailyWeatherTemperature: Decodable {
     var min: Double
     var max: Double
 }
-
-//struct DailyWeatherDescription: Decodable {
-//    var main: String
-//    var description: String
-//}

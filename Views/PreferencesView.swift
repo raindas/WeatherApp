@@ -27,11 +27,13 @@ struct PreferencesView: View {
                 
                 Form {
                     Section {
-                        Picker("Strength", selection: self.$weatherVM.unit) {
+                        Picker("Unit", selection: self.$weatherVM.unit) {
                             Text("Default (K)").tag("default")
                             Text("Metric (C)").tag("metric")
                             Text("Imperial (F)").tag("imperial")
-                        }
+                        }.onChange(of: self.weatherVM.unit, perform: { _ in
+                            self.weatherVM.changeUnit()
+                        })
                     }
                 }
                 
