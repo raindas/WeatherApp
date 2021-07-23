@@ -9,9 +9,6 @@ import Foundation
 
 final class WeatherViewModel: ObservableObject {
     
-    // preferences
-    //@Published var useMetricSystem = UserDefaults.standard.bool(forKey: "unit") ? UserDefaults.standard.bool(forKey: "unit") : true
-    
     @Published var locationManager = LocationManager()
     
     @Published var weather: WeatherResponse
@@ -27,14 +24,9 @@ final class WeatherViewModel: ObservableObject {
     @Published var city = ""
     @Published var country = ""
     
-    @Published var errMsg = ""
     @Published var alertMsg = ""
     @Published var alertTrigger = false
     @Published var isLoading = false
-    
-//    var unit: String {
-//        return useMetricSystem ? "metric" : "imperial"
-//    }
     
     // Preferences
     @Published var unit = UserDefaults.standard.string(forKey: "unit") ?? "metric"
@@ -123,10 +115,11 @@ final class WeatherViewModel: ObservableObject {
                     print("Unable to decode JSON -> \(error)")
                 }
             }
-            print("Weather fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
-            //            DispatchQueue.main.async {
-            //                self.errMsg = error?.localizedDescription ?? "Unknown Error"
-            //            }
+            //print("Weather fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
+            DispatchQueue.main.async {
+                self.alertMsg = error?.localizedDescription ?? "Unknown Error"
+                self.alertTrigger.toggle()
+            }
         }.resume()
     }
     
@@ -157,10 +150,11 @@ final class WeatherViewModel: ObservableObject {
                     print("Unable to decode JSON -> \(error)")
                 }
             }
-            print("Current city fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
-            //            DispatchQueue.main.async {
-            //                self.errMsg = error?.localizedDescription ?? "Unknown Error"
-            //            }
+            //print("Current city fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
+            DispatchQueue.main.async {
+                self.alertMsg = error?.localizedDescription ?? "Unknown Error"
+                self.alertTrigger.toggle()
+            }
         }.resume()
     }
 }

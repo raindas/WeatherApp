@@ -148,6 +148,16 @@ struct ContentView: View {
         }.onAppear {
             weatherVM.fetchWeather()
         }
+        .alert(isPresented: self.$weatherVM.alertTrigger, content: {
+            Alert(title: Text("Unable to fetch weather data"),
+                  message: Text(weatherVM.alertMsg),
+                  primaryButton: .cancel(),
+                  secondaryButton: .default(Text("Retry")) {
+                    weatherVM.fetchWeather()
+                  }
+            )
+        })
+
     }
 }
 
