@@ -18,9 +18,14 @@ struct ContentView: View {
     let dateTimeManager = DateTimeManager()
     
     var body: some View {
+        
         NavigationView {
             
             VStack {
+                
+                if weatherVM.isLoading {
+                    ProgressView("Fetching weather data ...")
+                } else {
                 
                 HStack {
                     VStack(alignment: .leading) {
@@ -136,6 +141,8 @@ struct ContentView: View {
                 }.padding(20)
                 .background(Color(.systemGray6))
                 .cornerRadius(10.0)
+                    
+                }
                 
             }.padding()
             .navigationBarHidden(true)
@@ -145,6 +152,9 @@ struct ContentView: View {
             .fullScreenCover(isPresented: $isShowingPreferencesView, content: {
                 PreferencesView()
             })
+                
+                
+            
         }.onAppear {
             weatherVM.fetchWeather()
         }
@@ -152,11 +162,13 @@ struct ContentView: View {
             Alert(title: Text("Unable to fetch weather data"),
                   message: Text(weatherVM.alertMsg),
                   primaryButton: .cancel(),
-                  secondaryButton: .default(Text("Retry")) {
+                  secondaryButton: .default(Text("Retry"), action: {
                     weatherVM.fetchWeather()
-                  }
+                  })
             )
         })
+        
+        
 
     }
 }

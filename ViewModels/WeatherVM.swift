@@ -93,6 +93,8 @@ final class WeatherViewModel: ObservableObject {
             fetchCurrentCityAddress()
         }
         
+        self.isLoading = true
+        
         let urlString = "https://api.openweathermap.org/data/2.5/onecall?lat=\(latitude)&lon=\(longtitude)&exclude=minutely&units=\(unit)&appid=\(APIKeys.weatherAPIKey)"
         
         guard let url = URL(string: urlString) else {
@@ -107,16 +109,18 @@ final class WeatherViewModel: ObservableObject {
                 do {
                     let decodedResponse = try JSONDecoder().decode(WeatherResponse.self, from: data)
                     DispatchQueue.main.async {
-                        //print("Weather Response -> \(decodedResponse)")
+                        self.isLoading = false
                         self.weather = decodedResponse
                     }
                     return
                 } catch {
+                    self.isLoading = false
                     print("Unable to decode JSON -> \(error)")
                 }
             }
             //print("Weather fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
             DispatchQueue.main.async {
+                self.isLoading = false
                 self.alertMsg = error?.localizedDescription ?? "Unknown Error"
                 self.alertTrigger.toggle()
             }
@@ -150,11 +154,7 @@ final class WeatherViewModel: ObservableObject {
                     print("Unable to decode JSON -> \(error)")
                 }
             }
-            //print("Current city fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
-            DispatchQueue.main.async {
-                self.alertMsg = error?.localizedDescription ?? "Unknown Error"
-                self.alertTrigger.toggle()
-            }
+            print("Current city fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")
         }.resume()
     }
 }
