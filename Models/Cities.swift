@@ -26,9 +26,13 @@ struct Address: Codable, Equatable {
 
 struct CurrentCity: Decodable {
     var address: CurrentCityAddress
+    var validCity: String {
+        return address.city == nil ? address.state ?? "__" : address.city ?? "__"
+    }
 }
 
 struct CurrentCityAddress: Decodable {
     var city: String?
+    var state: String?
     var country: String?
 }

@@ -141,7 +141,7 @@ final class WeatherViewModel: ObservableObject {
                     let decodedResponse = try JSONDecoder().decode(CurrentCity.self, from: data)
                     DispatchQueue.main.async {
                         currentCity = decodedResponse
-                        self.city = currentCity.address.city ?? "__"
+                        self.city = currentCity.validCity
                         self.country = currentCity.address.country ?? "__"
                         //print("Weather City Response latlon -> \(self.latitude), \(self.longtitude)")
                     }

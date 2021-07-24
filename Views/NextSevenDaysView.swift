@@ -47,7 +47,8 @@ struct NextSevenDaysView: View {
                 HStack {
                     Image(systemName: weatherVM.iconMap[day.main] ?? weatherVM.defaultIcon)
                     Spacer()
-                    Text(dateTimeManager.epochToDayDate(timestamp: day.datetime))
+                    Text(dateTimeManager.epochToDayDate(timestamp: day.datetime)).minimumScaleFactor(0.01)
+                        .lineLimit(1)
                     Spacer()
                     Text("\(String(format: "%.0f", day.temperature.max) == "0" ? "__" : "\(String(format: "%.0f", day.temperature.max) )")º")
                     Text("/").foregroundColor(.secondary)
