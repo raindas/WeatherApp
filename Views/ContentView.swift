@@ -108,7 +108,7 @@ struct ContentView: View {
                             Text("\(weatherVM.weather.current.humidity)%").font(.title)
                             Divider()
                             Text("UV Index").foregroundColor(.secondary)
-                            Text("\(weatherVM.weather.current.uvi)").font(.title)
+                            Text("\(String(format: "%.0f", weatherVM.weather.current.uvi))").font(.title)
                         }
                     }.padding(.vertical)
                     

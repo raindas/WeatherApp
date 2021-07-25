@@ -111,8 +111,10 @@ final class WeatherViewModel: ObservableObject {
                     }
                     return
                 } catch {
-                    self.isLoading = false
-                    print("Unable to decode JSON -> \(error)")
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                        print("Unable to decode JSON -> \(error)")
+                    }
                 }
             }
             //print("Weather fetch request failed: \(error?.localizedDescription ?? "Unknown Error")")

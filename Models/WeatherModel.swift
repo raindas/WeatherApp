@@ -24,7 +24,7 @@ struct CurrentWeather: Decodable {
     var humidity: Int
     var visibility: Int
     var wind_speed: Double
-    var uvi: Int
+    var uvi: Double
     var weather: [CurrentWeatherDescription]
     var weatherMain: String {
         var main = ""
